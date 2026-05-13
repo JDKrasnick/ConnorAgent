@@ -1,9 +1,0 @@
-*.py
-requirements.txt
-cleaners/
-collectors/
-extractors/
-queries/
-db/
-tests/
-data.db
