@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { ReactNode } from "react";
 import {
   Table,
   TableBody,
@@ -45,6 +46,49 @@ type SortDir = "asc" | "desc";
 
 interface ContactsTableProps {
   contacts: Contact[];
+}
+
+function SortIcon({
+  col,
+  sortKey,
+  sortDir,
+}: {
+  col: SortKey;
+  sortKey: SortKey;
+  sortDir: SortDir;
+}) {
+  if (sortKey !== col) return <ChevronUp className="h-3 w-3 opacity-20" />;
+  return sortDir === "asc" ? (
+    <ChevronUp className="h-3 w-3" />
+  ) : (
+    <ChevronDown className="h-3 w-3" />
+  );
+}
+
+function SortableHead({
+  col,
+  children,
+  sortKey,
+  sortDir,
+  onSort,
+}: {
+  col: SortKey;
+  children: ReactNode;
+  sortKey: SortKey;
+  sortDir: SortDir;
+  onSort: (key: SortKey) => void;
+}) {
+  return (
+    <TableHead>
+      <button
+        onClick={() => onSort(col)}
+        className="flex items-center gap-1 cursor-pointer hover:text-foreground transition-colors"
+      >
+        {children}
+        <SortIcon col={col} sortKey={sortKey} sortDir={sortDir} />
+      </button>
+    </TableHead>
+  );
 }
 
 export function ContactsTable({ contacts }: ContactsTableProps) {
@@ -92,35 +136,6 @@ export function ContactsTable({ contacts }: ContactsTableProps) {
       if (av > bv) return sortDir === "asc" ? 1 : -1;
       return 0;
     });
-
-  function SortIcon({ col }: { col: SortKey }) {
-    if (sortKey !== col) return <ChevronUp className="h-3 w-3 opacity-20" />;
-    return sortDir === "asc" ? (
-      <ChevronUp className="h-3 w-3" />
-    ) : (
-      <ChevronDown className="h-3 w-3" />
-    );
-  }
-
-  function SortableHead({
-    col,
-    children,
-  }: {
-    col: SortKey;
-    children: React.ReactNode;
-  }) {
-    return (
-      <TableHead>
-        <button
-          onClick={() => handleSort(col)}
-          className="flex items-center gap-1 cursor-pointer hover:text-foreground transition-colors"
-        >
-          {children}
-          <SortIcon col={col} />
-        </button>
-      </TableHead>
-    );
-  }
 
   const hasFilters = search || categoryFilter !== "all" || roleFilter !== "all" || targetedOnly;
 
@@ -203,12 +218,12 @@ export function ContactsTable({ contacts }: ContactsTableProps) {
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/30 hover:bg-muted/30">
-              <SortableHead col="name">Name / Email</SortableHead>
-              <SortableHead col="domain">Domain</SortableHead>
-              <SortableHead col="category">Category</SortableHead>
+              <SortableHead col="name" sortKey={sortKey} sortDir={sortDir} onSort={handleSort}>Name / Email</SortableHead>
+              <SortableHead col="domain" sortKey={sortKey} sortDir={sortDir} onSort={handleSort}>Domain</SortableHead>
+              <SortableHead col="category" sortKey={sortKey} sortDir={sortDir} onSort={handleSort}>Category</SortableHead>
               <TableHead>Role</TableHead>
               <TableHead>Targeted</TableHead>
-              <SortableHead col="confidence">Confidence</SortableHead>
+              <SortableHead col="confidence" sortKey={sortKey} sortDir={sortDir} onSort={handleSort}>Confidence</SortableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
