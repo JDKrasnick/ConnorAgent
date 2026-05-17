@@ -19,8 +19,8 @@ from db.store import (
 CRAWL_LIMIT = 15
 CRAWL_MAX_DEPTH = 2
 MAX_CONCURRENT_JOBS = 10
-POLL_INTERVAL = 10  # seconds between status checks
-FIRE_DELAY = 35     # seconds between job submissions (free plan: 2 req/min)
+POLL_INTERVAL = 10   # seconds between status checks
+FIRE_DELAY = 65      # seconds between job submissions — free plan allows 1/min reliably
 
 SKIP_CATEGORIES = ["golf_clubs"]
 

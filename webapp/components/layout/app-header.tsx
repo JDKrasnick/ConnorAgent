@@ -1,10 +1,11 @@
 "use client";
 
-import { Search, Bell } from "lucide-react";
+import { Search, Bell, LogOut } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
+import { logout } from "@/app/actions/auth";
 
 export function AppHeader() {
   return (
@@ -24,6 +25,12 @@ export function AppHeader() {
           <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
           <span className="sr-only">Notifications</span>
         </Button>
+        <form action={logout}>
+          <Button variant="ghost" size="icon" type="submit" className="h-8 w-8 cursor-pointer">
+            <LogOut className="h-4 w-4" />
+            <span className="sr-only">Sign out</span>
+          </Button>
+        </form>
       </div>
     </header>
   );

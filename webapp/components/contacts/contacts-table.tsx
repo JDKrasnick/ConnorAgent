@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import {
   Table,
   TableBody,
@@ -22,7 +23,6 @@ import {
 } from "@/components/ui/select";
 import { Target, ChevronUp, ChevronDown, Search, X } from "lucide-react";
 import { CATEGORY_LABELS, CATEGORY_COLORS, type Contact, type Category } from "@/lib/types";
-import { ContactDetailSheet } from "./contact-detail-sheet";
 
 const ROLE_TYPES = ["decision_maker", "faculty", "coordinator", "generic"] as const;
 
@@ -92,7 +92,7 @@ function SortableHead({
 }
 
 export function ContactsTable({ contacts }: ContactsTableProps) {
-  const [selected, setSelected] = useState<Contact | null>(null);
+  const router = useRouter();
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [roleFilter, setRoleFilter] = useState<string>("all");
@@ -107,6 +107,10 @@ export function ContactsTable({ contacts }: ContactsTableProps) {
       setSortKey(key);
       setSortDir("asc");
     }
+  }
+
+  function openContactProfile(contactId: string) {
+    router.push(`/contacts/${contactId}`);
   }
 
   const filtered = contacts
@@ -237,7 +241,15 @@ export function ContactsTable({ contacts }: ContactsTableProps) {
               filtered.map((contact) => (
                 <TableRow
                   key={contact.id}
-                  onClick={() => setSelected(contact)}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => openContactProfile(contact.id)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      openContactProfile(contact.id);
+                    }
+                  }}
                   className="cursor-pointer hover:bg-muted/40 transition-colors"
                 >
                   <TableCell>
@@ -290,7 +302,6 @@ export function ContactsTable({ contacts }: ContactsTableProps) {
         </Table>
       </div>
 
-      <ContactDetailSheet contact={selected} onClose={() => setSelected(null)} />
     </>
   );
 }
