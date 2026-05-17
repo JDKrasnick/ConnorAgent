@@ -1,8 +1,15 @@
-import "server-only";
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
-const encodedKey = new TextEncoder().encode(process.env.SESSION_SECRET);
+function getSessionKey() {
+  const secret = process.env.SESSION_SECRET?.trim();
+
+  if (!secret) {
+    throw new Error("SESSION_SECRET is missing or empty for this deployment.");
+  }
+
+  return new TextEncoder().encode(secret);
+}
 
 export async function encrypt(payload: {
   isAdmin: boolean;
@@ -12,12 +19,12 @@ export async function encrypt(payload: {
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("7d")
-    .sign(encodedKey);
+    .sign(getSessionKey());
 }
 
 export async function decrypt(session: string | undefined = "") {
   try {
-    const { payload } = await jwtVerify(session, encodedKey, {
+    const { payload } = await jwtVerify(session, getSessionKey(), {
       algorithms: ["HS256"],
     });
     return payload;
